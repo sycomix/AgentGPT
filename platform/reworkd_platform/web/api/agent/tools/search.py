@@ -25,11 +25,10 @@ async def _google_serper_search_results(
 
     async with aiohttp.ClientSession() as session:
         async with session.post(
-            f"https://google.serper.dev/{search_type}", headers=headers, params=params
-        ) as response:
+                    f"https://google.serper.dev/{search_type}", headers=headers, params=params
+                ) as response:
             response.raise_for_status()
-            search_results = await response.json()
-            return search_results
+            return await response.json()
 
 
 class Search(Tool):
@@ -64,7 +63,7 @@ class Search(Tool):
             elif answer_box.get("snippetHighlighted"):
                 answer_values.append(", ".join(answer_box.get("snippetHighlighted")))
 
-            if len(answer_values) > 0:
+            if answer_values:
                 return stream_string("\n".join(answer_values), True)
 
         for i, result in enumerate(results["organic"][:k]):
@@ -74,11 +73,13 @@ class Search(Tool):
                 texts.append(result["snippet"])
             if "link" in result:
                 link = result["link"]
-            for attribute, value in result.get("attributes", {}).items():
-                texts.append(f"{attribute}: {value}.")
+            texts.extend(
+                f"{attribute}: {value}."
+                for attribute, value in result.get("attributes", {}).items()
+            )
             snippets.append(CitedSnippet(i + 1, "\n".join(texts), link))
 
-        if len(snippets) == 0:
+        if not snippets:
             return stream_string("No good Google Search Result was found", True)
 
         return summarize(self.model, self.language, goal, task, snippets)

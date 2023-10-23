@@ -35,7 +35,7 @@ async def openai_error_handler(
         if e.user_message.startswith("The model:"):
             raise OpenAIError(
                 e,
-                f"Your API key does not have access to your current model. Please use a different model.",
+                "Your API key does not have access to your current model. Please use a different model.",
             )
         raise OpenAIError(e, e.user_message)
     except AuthenticationError as e:
@@ -47,7 +47,7 @@ async def openai_error_handler(
         if e.user_message.startswith("You exceeded your current quota"):
             raise OpenAIError(
                 e,
-                f"Your API key exceeded your current quota, please check your plan and billing details.",
+                "Your API key exceeded your current quota, please check your plan and billing details.",
             )
         raise OpenAIError(e, e.user_message)
     except Exception as e:

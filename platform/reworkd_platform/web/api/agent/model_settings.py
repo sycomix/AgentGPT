@@ -35,6 +35,4 @@ def create_model(
 def get_model_name(model_str: LLM_Model) -> str:
     if model_str == "gpt-4":
         return "gpt-4-0613"
-    if model_str == "gpt-3.5-turbo":
-        return "gpt-3.5-turbo-0613"
-    return model_str
+    return "gpt-3.5-turbo-0613" if model_str == "gpt-3.5-turbo" else model_str

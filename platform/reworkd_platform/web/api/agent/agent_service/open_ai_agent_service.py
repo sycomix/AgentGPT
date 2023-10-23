@@ -129,14 +129,11 @@ class OpenAIAgentService(AgentService):
         unique_tasks = []
         with self.agent_memory as memory:
             for task in tasks:
-                similar_tasks = memory.get_similar_tasks(task)
-
-                # Check if similar tasks are found
-                if not similar_tasks:
-                    unique_tasks.append(task)
-                else:
+                if similar_tasks := memory.get_similar_tasks(task):
                     logger.info(f"Similar tasks to '{task}' found: {similar_tasks}")
 
+                else:
+                    unique_tasks.append(task)
             if unique_tasks:
                 memory.add_tasks(unique_tasks)
 
